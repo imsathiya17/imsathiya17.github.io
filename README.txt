@@ -1,56 +1,40 @@
-
-TITLE: 
-Marble - Fully Responsive Free HTML5 template
-
-AUTHOR:
-DESIGNED & DEVELOPED by FREEHTML5.co
-
-Website: http://freehtml5.co/
-Twitter: http://twitter.com/fh5co
-Facebook: http://facebook.com/fh5co
+Prologue by HTML5 UP
+html5up.net | @ajlkn
+Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 
 
-CREDITS:
+This is Prologue, a simple, single page responsive site template. It features a
+clean, minimalistic design and a sticky sidebar with navigation-linked scrolling.
 
-Bootstrap
-http://getbootstrap.com/
+Demo content images* are courtesy of the ridiculously talented Felicia Simion. Check out
+more of her amazing work over at deviantART:
 
-jQuery
-http://jquery.com/
+http://ineedchemicalx.deviantart.com/
 
-jQuery Easing
-http://gsgd.co.uk/sandbox/jquery/easing/
+(* = Not included! Only meant for use with my own on-site demo, so please do NOT download
+and/or use any of Felicia's work without her explicit permission!)
 
-Modernizr
-http://modernizr.com/
+Demo banner images* courtesy of Unsplash, a radtastic collection of CC0 (public domain)
+images you can use for pretty much whatever.
 
-Google Fonts
-https://www.google.com/fonts/
+(* = Not included)
 
-Icomoon
-https://icomoon.io/app/
+AJ
+aj@lkn.io | @ajlkn
 
-Respond JS
-https://github.com/scottjehl/Respond/blob/master/LICENSE-MIT
+PS: Not sure how to get that contact form working? Give formspree.io a try (it's awesome).
 
-animate.css
-http://daneden.me/animate
 
-jQuery Waypoints
-https://github.com/imakewebthings/waypoints/blog/master/licenses.txt
+Credits:
 
-Demo Images:
-http://pexels.com
+	Demo Images:
+		Felicia Simion (ineedchemicalx.deviantart.com)
+		Unsplash (unsplash.com)
 
-Owl Carousel
-http://www.owlcarousel.owlgraphic.com/
+	Icons:
+		Font Awesome (fontawesome.io)
 
-Stellar Parallax
-http://markdalgleish.com/projects/stellar.js/
-
-jQuery counTo
-https://github.com/mhuggins/jquery-countTo
-
-Google Map
-https://maps.google.com/
-
+	Other
+		jQuery (jquery.com)
+		Scrollex (github.com/ajlkn/jquery.scrollex)
+		Responsive Tools (github.com/ajlkn/responsive-tools)
