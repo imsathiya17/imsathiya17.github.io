@@ -78,6 +78,10 @@ input, select, textarea {
 	width: 40%;
   }
 
+  .card .container p {
+	margin-bottom: 10;
+  }
+  
   .card:hover {
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
@@ -213,7 +217,7 @@ input, select, textarea {
 	}
 
 	p, ul, ol, dl, table {
-		margin-bottom: 0.2em;
+		margin-bottom: 0em;
 	}
 
 	br.clear {
