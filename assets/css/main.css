@@ -72,6 +72,16 @@ input, select, textarea {
 	appearance: none;
 }
 
+.card {
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	transition: 0.3s;
+	width: 40%;
+  }
+
+  .card:hover {
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
 /* Basic */
 
 	html {
@@ -203,7 +213,7 @@ input, select, textarea {
 	}
 
 	p, ul, ol, dl, table {
-		margin-bottom: 2em;
+		margin-bottom: 0.2em;
 	}
 
 	br.clear {
@@ -1948,7 +1958,7 @@ input, select, textarea {
 		color: #fff !important;
 		text-decoration: none;
 		padding: 0.75em 2.5em 0.75em 2.5em;
-		background-color: #8ebebc;
+		background-color: rgb(233, 30, 99);
 		border: 0;
 		cursor: pointer;
 		background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15)), url("images/overlay.png");
@@ -1966,7 +1976,7 @@ input, select, textarea {
 		input[type="reset"]:hover,
 		button:hover,
 		.button:hover {
-			background-color: #9ececc;
+			background-color: #1c9bf0;
 		}
 
 		input[type="button"]:active,
@@ -2041,14 +2051,14 @@ input, select, textarea {
 		-moz-flex-direction: column;
 		-webkit-flex-direction: column;
 		-ms-flex-direction: column;
-		flex-direction: column;
+		flex-direction: column;	
 		-moz-justify-content: space-between;
 		-webkit-justify-content: space-between;
 		-ms-justify-content: space-between;
 		justify-content: space-between;
-		background: #222629 url("images/overlay.png");
+		background: #ffffff url("images/overlay.jpegs");
 		box-shadow: inset -0.25em 0 0.25em 0 rgba(0, 0, 0, 0.1);
-		color: #fff;
+		color: rgb(0, 0, 0);
 		height: 100%;
 		left: 0;
 		overflow-y: auto;
@@ -2091,7 +2101,7 @@ input, select, textarea {
 			}
 
 				#header .icons a:hover {
-					color: #fff;
+					color: rgb(0, 0, 0);
 				}
 
 	#logo {
@@ -2103,7 +2113,7 @@ input, select, textarea {
 
 		#logo h1 {
 			position: relative;
-			color: #fff;
+			color: rgb(0, 0, 0);
 			font-weight: 600;
 			font-size: 1em;
 			line-height: 1em;
@@ -2113,7 +2123,7 @@ input, select, textarea {
 			position: relative;
 			display: block;
 			font-size: 0.6em;
-			color: rgba(255, 255, 255, 0.5);
+			color: rgba(0, 0, 0, 0.5);
 			line-height: 1.25em;
 			margin: 0.5em 0 0 0;
 		}
@@ -2137,7 +2147,7 @@ input, select, textarea {
 			#nav ul li a {
 				display: block;
 				padding: 0.5em 1.5em 0.5em 1.5em;
-				color: rgba(255, 255, 255, 0.5);
+				color: rgba(0, 0, 0, 0.5);
 				text-decoration: none;
 				outline: 0;
 				border: 0;
@@ -2223,7 +2233,10 @@ input, select, textarea {
 			padding: 4em 0;
 			box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.05), inset 0 0.1em 0.1em 0 rgba(0, 0, 0, 0.025);
 			text-align: center;
-			background-image: url("images/overlay.jpeg");
+			background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url(
+				'../../images/banner-1.jpg');
+			background-color: rgb(39, 143, 156);
 		}
 
 			#main > section.dark {
@@ -2270,6 +2283,11 @@ input, select, textarea {
 
 			#main > section.four {
 				background-color: #e8edec;
+			}
+
+			#main > section.five {
+				padding: 15px 2em 25px 2em;
+				
 			}
 
 /* Wide */
