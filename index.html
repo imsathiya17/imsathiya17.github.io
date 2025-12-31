@@ -3,261 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Chronos Story | An Immersive Journey</title>
+    <title>Graphos | The Spatial Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
-        
-        :root {
-            --accent-glow: rgba(59, 130, 246, 0.15);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
 
-        body {
-            font-family: 'Inter', sans-serif;
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background-color: #020617;
-            color: #f3f4f6;
-            /* Storytelling Scroll Snap */
-            scroll-snap-type: y mandatory;
-            overflow-y: scroll;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #f8fafc;
         }
 
-        section {
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
+        #viewport {
+            width: 100vw;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            cursor: grab;
+            overflow: hidden;
             position: relative;
+            touch-action: none;
         }
 
-        .story-heading {
-            font-family: 'Space+Grotesk', sans-serif;
-        }
+        #viewport:active { cursor: grabbing; }
 
-        .timeline-thread {
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
+        #canvas {
+            position: absolute;
             top: 0;
-            bottom: 0;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.05);
-            z-index: 5;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform-origin: 0 0;
+            will-change: transform;
         }
 
-        .thread-progress {
+        .node {
+            position: absolute;
+            width: 280px;
+            user-select: none;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .node-content {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .node:hover .node-content {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .connector-svg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0%;
-            background: linear-gradient(to bottom, transparent, #3b82f6, #a855f7, #ec4899);
-            box-shadow: 0 0 15px #3b82f6;
-            transition: height 0.3s ease-out;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
         }
 
-        .glass-story-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        .connection-line {
+            fill: none;
+            stroke: #334155;
+            stroke-width: 2;
+            stroke-dasharray: 8 4;
+            animation: flow 30s linear infinite;
         }
 
-        /* Animation States */
-        .story-reveal {
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        @keyframes flow {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
         }
 
-        section.active .story-reveal {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+        .ui-overlay {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .floating-icon {
-            position: absolute;
-            opacity: 0.05;
-            filter: blur(1px);
-            animation: drift 12s ease-in-out infinite alternate;
+        .btn-control {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background: #1e293b;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
-        @keyframes drift {
-            from { transform: translate(0, 0) rotate(0deg); }
-            to { transform: translate(30px, -30px) rotate(15deg); }
+        .btn-control:hover {
+            background: #3b82f6;
+            color: white;
         }
 
-        .chapter-tag {
-            letter-spacing: 0.3em;
+        .node-tag {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
             text-transform: uppercase;
-            color: #64748b;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+            display: block;
         }
 
-        /* Ambient background glow that follows scroll */
-        #ambient-glow {
-            position: fixed;
-            width: 60vw;
-            height: 60vw;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: -1;
-            transition: background 1s ease;
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .node-icon {
+            width: 32px;
+            height: 32px;
+            background: #1e293b;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
-    <div id="ambient-glow"></div>
-    <div class="timeline-thread hidden md:block">
-        <div id="threadProgress" class="thread-progress"></div>
+    <div id="viewport">
+        <div id="canvas">
+            <svg class="connector-svg" id="svg-canvas">
+                <!-- Lines will be injected here -->
+            </svg>
+
+            <!-- START NODE -->
+            <div class="node" id="node-start" data-x="400" data-y="400">
+                <div class="node-content">
+                    <span class="node-tag">ENTRY POINT</span>
+                    <div class="node-header">
+                        <div class="node-icon"><i class="fa-solid fa-play"></i></div>
+                        <h3 class="font-bold text-xl">The Beginning</h3>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Started my journey in Software Engineering. "Hello World" was just the start of this flow.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SKILLS NODE -->
+            <div class="node" id="node-skills" data-x="800" data-y="300">
+                <div class="node-content">
+                    <span class="node-tag">CAPABILITIES</span>
+                    <div class="node-header">
+                        <div class="node-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <h3 class="font-bold text-xl">Tech Stack</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="bg-slate-800 text-[10px] px-2 py-1 rounded">React</span>
+                        <span class="bg-slate-800 text-[10px] px-2 py-1 rounded">Node.js</span>
+                        <span class="bg-slate-800 text-[10px] px-2 py-1 rounded">PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORK NODE 1 -->
+            <div class="node" id="node-work1" data-x="1200" data-y="450">
+                <div class="node-content">
+                    <span class="node-tag">EXPERIENCE</span>
+                    <div class="node-header">
+                        <div class="node-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <h3 class="font-bold text-xl">Full Stack Dev</h3>
+                    </div>
+                    <p class="text-sm text-slate-400">At StartUp Inc (2022-2024). Scaled web services to 1M users.</p>
+                </div>
+            </div>
+
+            <!-- PROJECT NODE -->
+            <div class="node" id="node-project" data-x="850" data-y="650">
+                <div class="node-content">
+                    <span class="node-tag">HIGHLIGHT</span>
+                    <div class="node-header">
+                        <div class="node-icon"><i class="fa-solid fa-cube"></i></div>
+                        <h3 class="font-bold text-xl">Nexus Protocol</h3>
+                    </div>
+                    <p class="text-sm text-slate-400">Open source decentralized sync engine. 5k stars on GitHub.</p>
+                </div>
+            </div>
+
+            <!-- END NODE -->
+            <div class="node" id="node-end" data-x="1600" data-y="400">
+                <div class="node-content border-blue-500/50">
+                    <span class="node-tag">THE PRESENT</span>
+                    <div class="node-header">
+                        <div class="node-icon bg-blue-500 text-white"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h3 class="font-bold text-xl">Contact Me</h3>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">Let's build the next node together.</p>
+                    <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold transition-colors">Send Message</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- CHAPTER 0: THE PROLOGUE -->
-    <section id="prologue" class="active">
-        <div class="absolute inset-0 pointer-events-none overflow-hidden">
-            <i class="fa-brands fa-react floating-icon text-9xl top-[10%] left-[5%]" style="animation-delay: 0s"></i>
-            <i class="fa-brands fa-node-js floating-icon text-8xl bottom-[15%] right-[10%]" style="animation-delay: -2s"></i>
+    <!-- UI HUD -->
+    <div class="ui-overlay">
+        <button class="btn-control" onclick="centerCanvas()">Center Flow</button>
+        <button class="btn-control" onclick="resetLayout()">Reset Nodes</button>
+        <div class="h-6 w-px bg-slate-700 mx-2"></div>
+        <div class="flex items-center gap-2 text-slate-500 text-xs">
+            <i class="fa-solid fa-mouse-pointer"></i> Drag nodes
+            <span class="mx-1">•</span>
+            <i class="fa-solid fa-hand"></i> Pan background
         </div>
-
-        <div class="z-10 text-center px-6 story-reveal">
-            <span class="chapter-tag">The Prologue</span>
-            <h1 class="story-heading text-6xl md:text-9xl font-bold mt-4 mb-8 tracking-tighter bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
-                CHRONOS
-            </h1>
-            <p class="text-gray-400 text-lg max-w-xl mx-auto leading-relaxed font-light">
-                Every line of code tells a story. This is the timeline of a developer's evolution through the digital age.
-            </p>
-            <div class="mt-12 text-blue-500/50 animate-bounce">
-                <i class="fa-solid fa-chevron-down text-xl"></i>
-            </div>
-        </div>
-    </section>
-
-    <!-- CHAPTER 1: THE ARCHITECT -->
-    <section id="chapter-2025" data-glow="rgba(59, 130, 246, 0.15)">
-        <div class="max-w-4xl w-full px-6 flex flex-col md:flex-row items-center gap-12 story-reveal">
-            <div class="flex-1 text-center md:text-right">
-                <span class="chapter-tag">Chapter I: The Architect</span>
-                <h2 class="story-heading text-5xl font-bold mt-2 text-white">2025</h2>
-                <div class="mt-6 md:ml-auto w-12 h-1 bg-blue-500"></div>
-            </div>
-            
-            <div class="flex-[1.5]">
-                <div class="glass-story-card p-8 rounded-3xl border-l-4 border-blue-500">
-                    <h3 class="text-2xl font-bold mb-4 text-blue-400">Senior Software Architect</h3>
-                    <p class="text-gray-300 leading-relaxed mb-6">
-                        The current peak of the journey. In 2025, the focus shifted from building features to designing ecosystems. Scaling cloud infrastructures and mentoring the next generation.
-                    </p>
-                    <div class="flex flex-wrap gap-3">
-                        <span class="px-4 py-1.5 bg-blue-500/10 rounded-full text-xs font-medium text-blue-300 border border-blue-500/20">Kubernetes</span>
-                        <span class="px-4 py-1.5 bg-blue-500/10 rounded-full text-xs font-medium text-blue-300 border border-blue-500/20">Go Lang</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CHAPTER 2: SIDE QUESTS -->
-    <section id="side-quests" data-glow="rgba(168, 85, 247, 0.15)">
-        <div class="z-10 text-center story-reveal">
-            <span class="chapter-tag">Side Quests</span>
-            <h2 class="story-heading text-4xl font-bold mt-2 mb-16">The Discovery Phase</h2>
-            
-            <div class="flex justify-center gap-8 md:gap-24">
-                <!-- Project Icon 1 -->
-                <div class="group relative">
-                    <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gray-900 border-2 border-purple-500 flex items-center justify-center text-3xl text-purple-400 transition-all hover:scale-110 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] cursor-pointer">
-                        <i class="fa-solid fa-microchip"></i>
-                    </div>
-                    <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all text-xs font-bold whitespace-nowrap text-purple-300">AI SMART HUB</div>
-                </div>
-
-                <!-- Project Icon 2 -->
-                <div class="group relative">
-                    <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gray-900 border-2 border-pink-500 flex items-center justify-center text-3xl text-pink-400 transition-all hover:scale-110 hover:shadow-[0_0_30px_rgba(236,72,153,0.4)] cursor-pointer">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-                    <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all text-xs font-bold whitespace-nowrap text-pink-300">YIELD DEFI</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CHAPTER 3: THE INNOVATION -->
-    <section id="chapter-2024" data-glow="rgba(236, 72, 153, 0.15)">
-        <div class="max-w-4xl w-full px-6 flex flex-col md:flex-row-reverse items-center gap-12 story-reveal">
-            <div class="flex-1 text-center md:text-left">
-                <span class="chapter-tag">Chapter II: Innovation</span>
-                <h2 class="story-heading text-5xl font-bold mt-2 text-white">2024</h2>
-                <div class="mt-6 md:mr-auto w-12 h-1 bg-pink-500"></div>
-            </div>
-            
-            <div class="flex-[1.5]">
-                <div class="glass-story-card p-8 rounded-3xl border-r-4 border-pink-500">
-                    <h3 class="text-2xl font-bold mb-4 text-pink-400">The Nexus Protocol</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        A year defined by open-source contribution. The Nexus Protocol was born—a quest to bridge edge devices with global networks. 10,000 developers joined the journey.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- THE EPILOGUE -->
-    <section id="epilogue">
-        <div class="z-10 text-center story-reveal">
-            <h2 class="story-heading text-4xl font-bold mb-12">The story continues...</h2>
-            <div class="flex justify-center gap-6 text-3xl text-gray-500">
-                <a href="#" class="hover:text-blue-400 transition-colors"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="hover:text-blue-400 transition-colors"><i class="fa-brands fa-linkedin"></i></a>
-                <a href="#" class="hover:text-blue-400 transition-colors"><i class="fa-solid fa-envelope"></i></a>
-            </div>
-            <p class="mt-20 text-gray-600 text-sm tracking-widest uppercase">Chronos Narrative v1.0</p>
-        </div>
-    </section>
+    </div>
 
     <script>
-        const sections = document.querySelectorAll('section');
-        const threadProgress = document.getElementById('threadProgress');
-        const ambientGlow = document.getElementById('ambient-glow');
+        const viewport = document.getElementById('viewport');
+        const canvas = document.getElementById('canvas');
+        const svgCanvas = document.getElementById('svg-canvas');
+        const nodes = document.querySelectorAll('.node');
 
-        // Observer for Story Beats
-        const observerOptions = {
-            threshold: 0.5
-        };
+        let isPanning = false;
+        let startX, startY, scrollX = -100, scrollY = -100;
+        let scale = 1;
 
-        const storyObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Activate Section
-                    entry.target.classList.add('active');
-                    
-                    // Update Ambient Glow
-                    const glowColor = entry.target.dataset.glow || 'rgba(59, 130, 246, 0.15)';
-                    ambientGlow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
-                } else {
-                    entry.target.classList.remove('active');
+        // Connections Definition
+        const connections = [
+            ['node-start', 'node-skills'],
+            ['node-start', 'node-project'],
+            ['node-skills', 'node-work1'],
+            ['node-project', 'node-work1'],
+            ['node-work1', 'node-end']
+        ];
+
+        // Init State
+        function init() {
+            nodes.forEach(node => {
+                const x = node.dataset.x;
+                const y = node.dataset.y;
+                node.style.transform = `translate(${x}px, ${y}px)`;
+            });
+            updateConnections();
+            centerCanvas();
+        }
+
+        // Panning Logic
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node')) return;
+            isPanning = true;
+            startX = e.clientX - scrollX;
+            startY = e.clientY - scrollY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            scrollX = e.clientX - startX;
+            scrollY = e.clientY - startY;
+            applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => isPanning = false);
+
+        // Zoom Logic (Optional touch/wheel)
+        viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.95 : 1.05;
+            scale = Math.min(Math.max(0.3, scale * delta), 2);
+            applyTransform();
+        }, { passive: false });
+
+        function applyTransform() {
+            canvas.style.transform = `translate(${scrollX}px, ${scrollY}px) scale(${scale})`;
+        }
+
+        // Node Dragging Logic
+        nodes.forEach(node => {
+            let isDragging = false;
+            let nodeStartX, nodeStartY;
+
+            node.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                isDragging = true;
+                const transform = new WebKitCSSMatrix(window.getComputedStyle(node).transform);
+                nodeStartX = e.clientX - transform.m41;
+                nodeStartY = e.clientY - transform.m42;
+                node.style.zIndex = 100;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const x = (e.clientX - nodeStartX);
+                const y = (e.clientY - nodeStartY);
+                node.style.transform = `translate(${x}px, ${y}px)`;
+                node.dataset.x = x;
+                node.dataset.y = y;
+                updateConnections();
+            });
+
+            window.addEventListener('mouseup', () => {
+                if(isDragging) {
+                    isDragging = false;
+                    node.style.zIndex = 10;
                 }
             });
-        }, observerOptions);
-
-        sections.forEach(section => storyObserver.observe(section));
-
-        // Smoothly update thread progress
-        window.addEventListener('scroll', () => {
-            const scrollPos = window.scrollY;
-            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = (scrollPos / totalHeight) * 100;
-            threadProgress.style.height = `${progress}%`;
         });
+
+        // Connection Rendering
+        function updateConnections() {
+            svgCanvas.innerHTML = '';
+            connections.forEach(([fromId, toId]) => {
+                const fromNode = document.getElementById(fromId);
+                const toNode = document.getElementById(toId);
+                
+                const fromX = parseInt(fromNode.dataset.x) + 140; // center-ish
+                const fromY = parseInt(fromNode.dataset.y) + 60;
+                const toX = parseInt(toNode.dataset.x) + 140;
+                const toY = parseInt(toNode.dataset.y) + 60;
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                
+                // Create a smooth curve
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const curve = `M ${fromX} ${fromY} C ${fromX + dx/2} ${fromY}, ${fromX + dx/2} ${toY}, ${toX} ${toY}`;
+                
+                path.setAttribute("d", curve);
+                path.setAttribute("class", "connection-line");
+                svgCanvas.appendChild(path);
+            });
+        }
+
+        function centerCanvas() {
+            scrollX = (window.innerWidth / 2) - 800; // rough center of the graph
+            scrollY = (window.innerHeight / 2) - 400;
+            scale = 0.9;
+            applyTransform();
+        }
+
+        function resetLayout() {
+            location.reload();
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
